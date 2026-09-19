@@ -3,10 +3,8 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 type Course={id:string;code:string;name:string};
-type Row={id:string};
 
 export default function Dashboard(){
-  const supabase=createClient();
   const [courses,setCourses]=useState<Course[]>([]);
   const [counts,setCounts]=useState({assignments:0,exams:0,documents:0});
   const [loading,setLoading]=useState(true);
@@ -14,6 +12,7 @@ export default function Dashboard(){
 
   useEffect(()=>{
     async function load(){
+      const supabase=createClient();
       const [{data:c,error:ce},{count:ac,error:ae},{count:ec,error:ee},{count:dc,error:de}]=await Promise.all([
         supabase.from("courses").select("id,code,name").order("code"),
         supabase.from("assignments").select("id",{count:"exact",head:true}),
@@ -27,6 +26,11 @@ export default function Dashboard(){
     }
     load();
   },[]);
+
+  async function signOut(){
+    await createClient().auth.signOut();
+    window.location.href="/";
+  }
 
   return <main className="app-shell">
     <aside className="sidebar">
@@ -42,7 +46,7 @@ export default function Dashboard(){
       <div className="sidebar-note"><strong>Semester 1</strong><span>{courses.length} courses</span><small>Your academic workspace.</small></div>
     </aside>
     <section className="workspace">
-      <header className="topbar"><div><p className="eyebrow">OVERVIEW</p><h1>Dashboard</h1></div><button className="ghost" onClick={()=>supabase.auth.signOut().then(()=>window.location.href="/")}>Sign out</button></header>
+      <header className="topbar"><div><p className="eyebrow">OVERVIEW</p><h1>Dashboard</h1></div><button className="ghost" onClick={signOut}>Sign out</button></header>
       <div className="dashboard">
         {error&&<div className="error">{error}</div>}
         <section className="welcome"><div><p className="eyebrow">SEMESTER 1</p><h2>Your university workspace</h2><p className="muted">Track your courses, material, deadlines and study sessions from one place.</p></div><a className="primary action-link" href="/study">Open Study Assistant</a></section>
