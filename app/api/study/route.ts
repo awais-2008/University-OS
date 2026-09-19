@@ -13,7 +13,7 @@ export async function POST(req:NextRequest){
  const retrieved=await rr.json(),matches=retrieved.matches||[];
  if(!aiKey||!aiModel)return NextResponse.json({answer:"Retrieval is working, but AI generation is not configured yet.",matches});
  const context=matches.map((m:any,i:number)=>"[Source "+(i+1)+"]\n"+m.content).join("\n\n"),base=(process.env.AI_BASE_URL||"https://api.openai.com/v1").replace(/\/$/,"");
- const ar=await fetch(base+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization:"Bearer "+aiKey},body:JSON.stringify({model:aiModel,temperature:.2,messages:[{role:"system",content:"You are the University OS study assistant. Answer only from supplied course material. If the material does not contain the answer, say so."},{role:"user",content:"COURSE MATERIAL:\n"+context+"\n\nQUESTION:\n"+question}]})});
+ const ar=await fetch(base+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+aiKey},body:JSON.stringify({model:aiModel,temperature:.2,messages:[{role:"system",content:"You are the University OS study assistant. Answer only from supplied course material. If the material does not contain the answer, say so."},{role:"user",content:"COURSE MATERIAL:\n"+context+"\n\nQUESTION:\n"+question}]})});
  if(!ar.ok)return NextResponse.json({error:"AI generation failed."},{status:502});
  const a=await ar.json();return NextResponse.json({answer:a?.choices?.[0]?.message?.content||"No answer returned.",matches});
 }
