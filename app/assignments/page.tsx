@@ -1,0 +1,1 @@
+export default function Assignments(){return <main className="simple-page"><h1>Assignments</h1><p>No assignments are currently recorded.</p><a href="/dashboard">← Dashboard</a></main>}
