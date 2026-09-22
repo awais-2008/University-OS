@@ -9,7 +9,7 @@ export default function Home() {
   const [phraseIndex,setPhraseIndex]=useState(0);
   const [email,setEmail]=useState(""); const [password,setPassword]=useState(""); const [showPassword,setShowPassword]=useState(false); const [error,setError]=useState(""); const [busy,setBusy]=useState(false);
 
-  useEffect(()=>{createClient().auth.getSession().then(({data})=>{if(data.session) window.location.href="/dashboard";});},[]);
+  useEffect(()=>{async function checkSession(){const {data}=await createClient().auth.getSession();if(data.session) window.location.href="/dashboard";}void checkSession();},[]);
   useEffect(()=>{if(showSignIn)return;const timer=window.setInterval(()=>setPhraseIndex(i=>(i+1)%phrases.length),2600);return()=>window.clearInterval(timer);},[showSignIn]);
 
   async function signIn(e:React.FormEvent){
