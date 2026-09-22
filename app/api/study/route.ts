@@ -9,10 +9,14 @@ export async function POST(req:NextRequest){
  const {data:{user},error}=await sb.auth.getUser(token);if(error||!user)return NextResponse.json({error:"Invalid session."},{status:401});
  const body=await req.json(),question=String(body.question||"").trim();if(!question)return NextResponse.json({error:"Question is required."},{status:400});
  let matches:any[]=[];
- try{
-  const rr=await fetch(ragUrl,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({question,course_id:body.course_id||undefined,match_count:6})});
-  if(rr.ok){const retrieved=await rr.json();matches=retrieved.matches||[];}else{console.error("RAG retrieval failed:",await rr.text());}
- }catch(ragError){console.error("RAG retrieval unavailable:",ragError);}
+ if(ragUrl){
+  try{
+   const rr=await fetch(ragUrl,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({question,course_id:body.course_id||undefined,match_count:6})});
+   if(rr.ok){const retrieved=await rr.json();matches=retrieved.matches||[];}else{console.error("RAG retrieval failed:",await rr.text());}
+  }catch(ragError){console.error("RAG retrieval unavailable:",ragError);}
+ }else{
+  console.warn("RAG_API_URL is not configured; continuing with conversational Lumen.");
+ }
  if(!geminiKey)return NextResponse.json({answer:"Lumen is connected to your study system, but Gemini generation is not configured yet.",matches});
  const chatId=body.chat_id||null;
  let history:any[]=[];
