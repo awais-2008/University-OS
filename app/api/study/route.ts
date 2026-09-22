@@ -3,7 +3,7 @@ import {createClient} from "@supabase/supabase-js";
 
 export async function POST(req:NextRequest){
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,ragUrl=process.env.RAG_API_URL,geminiKey=process.env.GEMINI_API_KEY;
- if(!url||!key||!ragUrl)return NextResponse.json({error:"RAG server configuration is incomplete."},{status:500});
+ if(!url||!key)return NextResponse.json({error:"Supabase server configuration is incomplete."},{status:500});
  const auth=req.headers.get("authorization");if(!auth?.startsWith("Bearer "))return NextResponse.json({error:"Sign in required."},{status:401});
  const token=auth.slice(7),sb=createClient(url,key,{global:{headers:{Authorization:"Bearer "+token}}});
  const {data:{user},error}=await sb.auth.getUser(token);if(error||!user)return NextResponse.json({error:"Invalid session."},{status:401});
