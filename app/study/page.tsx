@@ -3,7 +3,8 @@ import { useEffect,useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 type Course={id:string;code:string;name:string};
-type Match={document_id:string;chunk_index:number;similarity:number;content:string};\ntype WebSource={title:string;uri:string};
+type Match={document_id:string;chunk_index:number;similarity:number;content:string};
+type WebSource={title:string;uri:string};
 type Doc={id:string;title:string;file_path:string|null};
 type Message={role:"user"|"assistant";content:string};
 
